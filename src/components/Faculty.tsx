@@ -376,12 +376,12 @@ function FacultyModal({
                   {faculty.email}
                 </span>
               </div>
-              {/* {faculty.phone && (
+              {faculty.phone && (
                 <div className="flex items-center space-x-3 rounded-xl border border-gray-100 bg-gray-50 p-3 text-foreground shadow-sm">
                   <Phone className="size-5 shrink-0 text-secondary" />
                   <span className="text-sm font-medium">{faculty.phone}</span>
                 </div>
-              )} */}
+              )}
             </div>
 
             {/* Specialties Array */}

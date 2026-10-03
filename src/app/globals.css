@@ -61,10 +61,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply font-inter text-foreground bg-background;
+    overflow-x: hidden;
+    width: 100%;
   }
 }
 

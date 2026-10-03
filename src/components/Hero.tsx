@@ -122,7 +122,7 @@ export default function Hero() {
                     md:text-sm
                   "
                 >
-                  NAAC A++
+                  NAAC A+
                 </span>
               </div>
             </div>

@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowUpRight,
   Award,
@@ -195,10 +197,8 @@ export default function AnnualMagazine() {
                 sm:flex-row sm:items-center
               "
               >
-                <a
-                  href="/work-in-progress"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/magazine"
                   className={[
                     "inline-flex items-center justify-center gap-2 rounded-full",
                     "bg-slate-900 px-6 py-3 text-sm font-semibold text-white",
@@ -206,9 +206,9 @@ export default function AnnualMagazine() {
                     "focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2",
                   ].join(" ")}
                 >
-                  View online
+                  View Magazine
                   <ArrowUpRight className="size-4" />
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -230,78 +230,50 @@ export default function AnnualMagazine() {
                   <div className="p-4">
                     <div
                       className="
-                      aspect-3/4 w-full overflow-hidden rounded-xl border
-                      border-slate-200/70 bg-white
+                      relative aspect-3/4 w-full overflow-hidden rounded-xl border
+                      border-slate-200/70 bg-slate-900 shadow-inner
                     "
                     >
-                      <div className="flex h-full flex-col justify-between p-6">
-                        <div className="flex items-center justify-between">
-                          <div
-                            className="
-                            inline-flex items-center gap-2 rounded-full border
-                            border-slate-200/70 bg-slate-50 px-3 py-1 text-xs
-                            font-semibold text-slate-700
-                          "
-                          >
-                            <FileText className="size-3.5" />
-                            Annual Edition
-                          </div>
-                          <div
-                            className="
-                            rounded-lg border border-slate-200/70 bg-white p-2
-                            text-slate-900
-                          "
-                          >
-                            <BookOpen className="size-5" />
-                          </div>
-                        </div>
+                      <Image
+                        src="/magazines/bodhika-cover.jpg"
+                        alt="BODHIKA - SoIT Annual Magazine Cover"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                        className="object-cover object-top transition duration-300 hover:scale-105"
+                        priority
+                      />
 
-                        <div className="text-center">
-                          <p
-                            className="
-                            text-sm font-semibold tracking-wide text-slate-600
-                          "
-                          >
-                            School of Information Technology
-                          </p>
-                          <h3
-                            className="
-                            mt-2 text-3xl font-semibold tracking-tight
-                            text-slate-900
-                          "
-                          >
-                            SoIT
-                          </h3>
-                          <p
-                            className="
-                            mt-1 text-lg font-semibold text-slate-700
-                          "
-                          >
-                            Annual Magazine
-                          </p>
+                      {/* Top Overlay Badge */}
+                      <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                        <div
+                          className="
+                          inline-flex items-center gap-1.5 rounded-full border
+                          border-white/30 bg-slate-900/80 px-3 py-1 text-xs
+                          font-semibold text-white backdrop-blur-md
+                        "
+                        >
+                          <FileText className="size-3.5" />
+                          Annual Edition
                         </div>
+                        <div
+                          className="
+                          rounded-lg border border-white/30 bg-slate-900/80 p-1.5
+                          text-white backdrop-blur-md
+                        "
+                        >
+                          <BookOpen className="size-4" />
+                        </div>
+                      </div>
 
-                        <div className="flex items-end justify-between">
-                          <div>
-                            <p className="text-xs text-slate-600">Academic Year</p>
-                            <p
-                              className="
-                              mt-1 text-xl font-semibold text-slate-900
-                            "
-                            >
-                              2025-26
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-xs text-slate-600">Format</p>
-                            <p
-                              className="
-                              mt-1 text-sm font-semibold text-slate-900
-                            "
-                            >
-                              Digital PDF
-                            </p>
-                          </div>
+                      {/* Bottom Info Bar Overlay */}
+                      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex items-end justify-between text-white">
+                        <div>
+                          <p className="text-[11px] text-slate-300">Academic Year</p>
+                          <p className="text-sm font-bold text-white">2025-26</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[11px] text-slate-300">Format</p>
+                          <p className="text-xs font-semibold text-white">Digital PDF</p>
                         </div>
                       </div>
                     </div>

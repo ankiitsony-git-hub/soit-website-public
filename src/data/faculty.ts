@@ -178,37 +178,6 @@ export const facultyData: FacultyMember[] =[
       "Actively involved in academic administration and coordination of national education portals such as AISHE, IIC, KARMA, and PARAKH. Actively Member in IAENG, IERP, International academy for science & Technology education and research.",
   },
   {
-    id: 15,
-    name: "Dr. Anuja Gupta",
-    position: "Assistant Professor",
-    specialization: "Financial Mathematics",
-    image: "/images/ProfessorImages/Anuja_Gupta_mam.jpeg",
-    email: "anujaagrawal2703@gmail.com",
-    phone: "7974362425",
-    bio: "Research expertise in Financial Mathematics with strong publication record in Scopus indexed journals and international conferences.",
-    publications:[
-      "3 Scopus indexed research papers",
-      "2 conference papers in financial mathematics",
-    ],
-    profileLinks:[
-      "http://linkedin.com/in/anuja-gupta-79a882214?trk=blended-typeahead",
-    ],
-  },
-  {
-    id: 16,
-    name: "Dr. ALKA SINGH",
-    position: "Assistant Professor",
-    specialization: "Operator Theory",
-    image: "/images/ProfessorImages/Alka_Singh_mam.jpeg",
-    email: "alkasngh786@gmail.com",
-    phone: "9109075261",
-    bio: "Specializes in Operator Theory and Functional Analysis with deep mathematical foundations and theoretical research focus.",
-    publications:[
-      "Research in Operator Theory",
-      "Publications in Functional Analysis",
-    ],
-  },
-  {
     id: 8,
     name: "Madhav Chaturvedi",
     position: "Assistant Professor",
@@ -317,6 +286,37 @@ export const facultyData: FacultyMember[] =[
     bio: "Specializes in advanced machine learning and deep learning techniques with focus on hybrid models and practical applications in predictive analytics.",
     publications:[
       "M.Tech thesis: Hybrid Random Forest With Deep Learning RNN Model For Wine Quality Prediction",
+    ],
+  },
+  {
+    id: 15,
+    name: "Dr. Anuja Gupta",
+    position: "Assistant Professor",
+    specialization: "Financial Mathematics",
+    image: "/images/ProfessorImages/Anuja_Gupta_mam.jpeg",
+    email: "anujaagrawal2703@gmail.com",
+    phone: "7974362425",
+    bio: "Research expertise in Financial Mathematics with strong publication record in Scopus indexed journals and international conferences.",
+    publications:[
+      "3 Scopus indexed research papers",
+      "2 conference papers in financial mathematics",
+    ],
+    profileLinks:[
+      "http://linkedin.com/in/anuja-gupta-79a882214?trk=blended-typeahead",
+    ],
+  },
+  {
+    id: 16,
+    name: "Dr. ALKA SINGH",
+    position: "Assistant Professor",
+    specialization: "Operator Theory",
+    image: "/images/ProfessorImages/Alka_Singh_mam.jpeg",
+    email: "alkasngh786@gmail.com",
+    phone: "9109075261",
+    bio: "Specializes in Operator Theory and Functional Analysis with deep mathematical foundations and theoretical research focus.",
+    publications:[
+      "Research in Operator Theory",
+      "Publications in Functional Analysis",
     ],
   },
   {

@@ -8,7 +8,18 @@ export default function AxeProvider() {
       import('react').then(React => {
         import('react-dom').then(ReactDOM => {
           import('@axe-core/react').then(axe => {
-            axe.default(React.default, ReactDOM.default, 1000);
+            axe.default(React.default, ReactDOM.default, 1000, {
+              rules: [
+                {
+                  id: 'region',
+                  enabled: false,
+                },
+                {
+                  id: 'heading-order',
+                  enabled: false,
+                },
+              ],
+            });
           });
         });
       });

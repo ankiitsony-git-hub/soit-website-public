@@ -1,10 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import HashLink from "@components/HashLink";
 import FooterAnalyticsWidget from "@components/FooterAnalyticsWidget";
 import { siteContact } from "@lib/siteContact";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  // Hide footer on reader page for immersive full-screen reading experience
+  if (pathname?.startsWith("/magazine/read")) {
+    return null;
+  }
+
   return (
     <footer className="mt-10 border-t border-gray-200 bg-white">
       <div className="container mx-auto px-4 py-12">
@@ -269,9 +279,7 @@ export default function Footer() {
                   MOU
                 </Link>
                 <Link
-                  href="/work-in-progress"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/magazine"
                   className="
                     block text-sm font-medium text-gray-600 transition-colors
                     hover:text-black

@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import HashLink from "@components/HashLink";
 
 export default function Header() {
+  const pathname = usePathname();
   const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -39,6 +41,12 @@ export default function Header() {
     }, 150);
     setCloseTimeout(timeout);
   };
+
+  // Hide header on 3D magazine reader page for immersive full-screen reading experience
+  if (pathname?.startsWith("/magazine/read")) {
+    return null;
+  }
+
 
   return (
     <header className={`
@@ -232,7 +240,7 @@ export default function Header() {
                   ">
                     Calendars
                   </Link>
-                  <Link href="/work-in-progress" target="_blank" className="
+                  <Link href="/magazine" className="
                     block px-4 py-2 text-sm text-gray-700
                     hover:bg-gray-50 hover:text-primary
                   ">
@@ -388,7 +396,7 @@ export default function Header() {
             " onClick={() => setMobileMenuOpen(false)}>
               Calendars
             </Link>
-            <Link href="/work-in-progress" target="_blank" className="
+            <Link href="/magazine" className="
               block py-2 pl-4 text-gray-700
               hover:text-primary
             " onClick={() => setMobileMenuOpen(false)}>
