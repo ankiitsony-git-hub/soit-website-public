@@ -29,7 +29,7 @@ interface MagazineFlipbookProps {
 export default function MagazineFlipbook({
   pdfUrl,
   title = "BODHIKA",
-  subtitle = "The SoIT Gazette • 2025-26",
+  subtitle = "The SoIT Magazine • 2025-26",
   initialPage = 1,
 }: MagazineFlipbookProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -141,42 +141,17 @@ export default function MagazineFlipbook({
 
         setLoadingProgress("Fetching magazine data...");
 
-        // Fetch PDF as arrayBuffer to guarantee exact byte length and prevent Range request offset mismatch on static dev servers
-        const response = await fetch(pdfUrl);
+        // Fetch PDF as ArrayBuffer to avoid CORS issues with pdfjs internal XHR
+        const targetPdfUrl =
+          pdfUrl ||
+          "https://cdn.jsdelivr.net/gh/mohitbirla00000/document@main/magazines/bodhika-the-soit-gazette.pdf";
+        const response = await fetch(targetPdfUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-        const contentLength = +(response.headers.get("Content-Length") || 0);
-        let arrayBuffer: ArrayBuffer;
-
-        if (response.body && contentLength > 0) {
-          const reader = response.body.getReader();
-          const chunks: Uint8Array[] = [];
-          let receivedLength = 0;
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            if (value) {
-              chunks.push(value);
-              receivedLength += value.length;
-              const pct = Math.min(99, Math.round((receivedLength / contentLength) * 100));
-              setLoadingProgress(`Loading publication (${pct}%)...`);
-            }
-          }
-
-          const combined = new Uint8Array(receivedLength);
-          let pos = 0;
-          for (const chunk of chunks) {
-            combined.set(chunk, pos);
-            pos += chunk.length;
-          }
-          arrayBuffer = combined.buffer;
-        } else {
-          arrayBuffer = await response.arrayBuffer();
-        }
+        setLoadingProgress("Processing PDF data...");
+        const arrayBuffer = await response.arrayBuffer();
 
         if (isCancelled) return;
-        setLoadingProgress("Parsing publication pages...");
 
         const loadingTask = pdfjsLib.getDocument({
           data: new Uint8Array(arrayBuffer),
@@ -530,7 +505,7 @@ export default function MagazineFlipbook({
           {/* Download Original PDF */}
           <a
             href={pdfUrl}
-            download="BODHIKA - The SoIT Gazette.pdf"
+            download="BODHIKA - The SoIT Magazine.pdf"
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#0a0080] via-[#1a1a9d] to-[#070060] hover:opacity-90 text-white text-xs font-semibold shadow-sm border border-blue-900 transition"
             title="Download full PDF"
           >

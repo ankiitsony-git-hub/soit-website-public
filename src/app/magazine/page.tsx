@@ -141,7 +141,7 @@ export default function MagazinePage() {
                 <div className="relative w-full aspect-[853/1024] [filter:drop-shadow(0_20px_35px_rgba(122,18,41,0.28))] [transform-style:preserve-3d]">
                   <Image
                     src="/magazines/bodhika-3d-upright-book.png"
-                    alt="BODHIKA - The SoIT Gazette 3D Book Cover"
+                    alt="BODHIKA - The SoIT Magazine 3D Book Cover"
                     fill
                     sizes="(max-width: 640px) 380px, (max-width: 768px) 430px, 460px"
                     className="object-contain transition-transform duration-500 group-hover:scale-[1.01]"
@@ -170,7 +170,7 @@ export default function MagazinePage() {
 
           <a
             href="https://cdn.jsdelivr.net/gh/mohitbirla00000/document@main/magazines/bodhika-the-soit-gazette.pdf"
-            download="Bodhika-SoIT-Gazette-2025.pdf"
+            download="Bodhika-SoIT-Magazine-2025.pdf"
             className="inline-flex items-center gap-2 px-[1.4rem] py-3 rounded-full bg-white/65 backdrop-blur-md text-[#7A1229] font-bold text-[0.9375rem] shadow-[0_8px_20px_-4px_rgba(122,18,41,0.1),inset_0_1px_1px_rgba(255,255,255,0.8)] border border-[#F4A83B]/35 transition-all duration-300 hover:bg-white/90 hover:border-[#7A1229] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-4px_rgba(122,18,41,0.18),0_0_12px_rgba(244,168,59,0.3)] no-underline"
           >
             <Download className="w-4 h-4" />
