@@ -12,8 +12,12 @@ export async function GET(request: NextRequest) {
 
     if (!propertyId) {
       return NextResponse.json(
-        { error: "GA_PROPERTY_ID not configured" },
-        { status: 500 },
+        {
+          success: false,
+          message: "GA_PROPERTY_ID not configured",
+          data: null,
+        },
+        { status: 200 },
       );
     }
 

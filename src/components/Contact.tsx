@@ -20,11 +20,47 @@ export default function Contact() {
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    if (!formData.name.trim()) errors.name = "Name is required";
-    if (!formData.email.trim()) errors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const phone = formData.phone.trim();
+    const subject = formData.subject.trim();
+    const message = formData.message.trim();
+
+    // Name: required, max 100
+    if (!name) {
+      errors.name = "Name is required";
+    } else if (name.length > 100) {
+      errors.name = "Name cannot exceed 100 characters";
+    }
+
+    // Email: required, format, max 254
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!emailRegex.test(email)) {
       errors.email = "Email is invalid";
-    if (!formData.message.trim()) errors.message = "Message is required";
+    } else if (email.length > 254) {
+      errors.email = "Email cannot exceed 254 characters";
+    }
+
+    // Phone: optional, max 30
+    if (phone && phone.length > 30) {
+      errors.phone = "Phone number cannot exceed 30 characters";
+    }
+
+    // Subject: optional, max 100
+    if (subject && subject.length > 100) {
+      errors.subject = "Subject cannot exceed 100 characters";
+    }
+
+    // Message: required, min 5, max 5000
+    if (!message) {
+      errors.message = "Message is required";
+    } else if (message.length < 5) {
+      errors.message = "Message is too short (minimum 5 characters)";
+    } else if (message.length > 5000) {
+      errors.message = "Message cannot exceed 5000 characters";
+    }
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -36,23 +72,53 @@ export default function Contact() {
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
+    if (formErrors[name]) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+    if (submitError) {
+      setSubmitError("");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     setSubmitError("");
+    setSubmitSuccess(false);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = (await response.json().catch(() => null)) as {
+        success?: boolean;
+        message?: string;
+      } | null;
+
+      if (!response.ok || !data?.success) {
+        setSubmitError(
+          data?.message ||
+            "Unable to send your message right now. Please try again.",
+        );
+        return;
+      }
 
       setSubmitSuccess(true);
       setFormData({
@@ -62,8 +128,11 @@ export default function Contact() {
         subject: "",
         message: "",
       });
+      setFormErrors({});
     } catch {
-      setSubmitError("Failed to send message. Please try again later.");
+      setSubmitError(
+        "Unable to send your message right now. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -278,6 +347,7 @@ export default function Contact() {
                       type="text"
                       id="name"
                       name="name"
+                      maxLength={100}
                       value={formData.name}
                       onChange={handleChange}
                       className={`
@@ -307,6 +377,7 @@ export default function Contact() {
                       type="email"
                       id="email"
                       name="email"
+                      maxLength={254}
                       value={formData.email}
                       onChange={handleChange}
                       className={`
@@ -345,14 +416,25 @@ export default function Contact() {
                       type="tel"
                       id="phone"
                       name="phone"
+                      maxLength={30}
                       value={formData.phone}
                       onChange={handleChange}
-                      className="
-                        w-full rounded-lg border border-gray-300 px-3 py-2
+                      className={`
+                        w-full rounded-lg border px-3 py-2
                         focus:ring-2 focus:ring-primary focus:outline-none
-                      "
+                        ${
+                          formErrors.phone
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }
+                      `}
                       placeholder="+91 XXXXX XXXXX"
                     />
+                    {formErrors.phone && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {formErrors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -367,10 +449,15 @@ export default function Contact() {
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="
-                        w-full rounded-lg border border-gray-300 px-3 py-2
+                      className={`
+                        w-full rounded-lg border px-3 py-2
                         focus:ring-2 focus:ring-primary focus:outline-none
-                      "
+                        ${
+                          formErrors.subject
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }
+                      `}
                     >
                       <option value="">Select a subject</option>
                       <option value="admissions">Admissions Inquiry</option>
@@ -379,6 +466,11 @@ export default function Contact() {
                       <option value="general">General Question</option>
                       <option value="other">Other</option>
                     </select>
+                    {formErrors.subject && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {formErrors.subject}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -393,6 +485,7 @@ export default function Contact() {
                     id="message"
                     name="message"
                     rows={5}
+                    maxLength={5000}
                     value={formData.message}
                     onChange={handleChange}
                     className={`
