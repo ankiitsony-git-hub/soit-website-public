@@ -14,7 +14,7 @@ function CertificationCard({
       className={cn(
         // base
         `
-          group relative w-full max-w-104 overflow-hidden rounded-2xl border
+          group relative min-h-fit w-full max-w-104 overflow-hidden rounded-2xl border
           border-slate-200/70
         `,
         `
@@ -38,7 +38,7 @@ function CertificationCard({
       <div className="relative p-6">
         <div
           className={cn(
-            "pointer-events-none absolute inset-x-0 top-0 h-24 opacity-90",
+            "pointer-events-none absolute inset-x-0 top-0 h-28 opacity-90",
             "bg-linear-to-br",
             cert.gradient,
           )}
@@ -70,7 +70,7 @@ function CertificationCard({
               <h3 className="truncate text-base font-semibold text-slate-900">
                 {cert.provider}
               </h3>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-300">
                 Industry certification pathways
               </p>
             </div>
@@ -88,13 +88,13 @@ function CertificationCard({
               </span> */}
               {/* <span className="text-xs opacity-80">+</span> */}
             </div>
-            <p className="mt-1 text-xs text-slate-600">Certified students</p>
+            <p className="mt-1 text-xs text-slate-300">Certified students</p>
           </div>
         </div>
 
         <div
           className="
-          relative mt-5 rounded-xl border border-slate-200/70 bg-white/70 p-4
+          relative mt-7 rounded-xl border border-slate-200/70 bg-white/70 p-4
         "
         >
           <p

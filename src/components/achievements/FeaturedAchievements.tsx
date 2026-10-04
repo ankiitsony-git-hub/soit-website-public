@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Award,
-  Code2,
-  FlaskConical,
-  Sparkles,
-  Trophy,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Award, Sparkles, } from "lucide-react";
 import { cn } from "@/utils/utils";
 import { Achievement, achievements } from "@/data/student_achievements/achievements";
 
@@ -39,16 +31,26 @@ export default function FeaturedAchievements() {
     );
   }, []);
 
-  // If you ever make achievements dynamic, keep this guard.
-  if (achievements.length === 0) return null;
-
   const len = achievements.length;
 
   const [index, setIndex] = useState(0);
   const [pendingIndex, setPendingIndex] = useState<number | null>(null);
+  const [textIndex, setTextIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isTextFading, setIsTextFading] = useState(false);
   const timerRef = useRef<number | null>(null);
+
+  const textTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+      if (textTimerRef.current) window.clearTimeout(textTimerRef.current);
+    };
+  }, []);
+
+  if (len === 0) return null;
 
   const safeIndex = mod(index, len);
   const safePendingIndex =
@@ -60,30 +62,44 @@ export default function FeaturedAchievements() {
       ? null
       : mustGet(achievements, safePendingIndex, "achievement");
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) window.clearTimeout(timerRef.current);
-    };
-  }, []);
 
-  function goTo(nextIndexRaw: number) {
+  function goTo(nextIndexRaw: number, dirOverride?: "next" | "prev") {
     const nextIndex = mod(nextIndexRaw, len);
     if (nextIndex === safeIndex) return;
 
     if (prefersReducedMotion) {
       setIndex(nextIndex);
+      setTextIndex(nextIndex);
       setPendingIndex(null);
       setIsAnimating(false);
+      setIsTextFading(false);
       return;
     }
 
     if (isAnimating) return;
 
-    setDirection(nextIndex > safeIndex ? "next" : "prev");
+    const chosenDir = dirOverride ?? (
+      nextIndexRaw > safeIndex
+        ? "next"
+        : nextIndexRaw < safeIndex
+          ? "prev"
+          : nextIndex > safeIndex
+            ? "next"
+            : "prev"
+    )
+    setDirection(chosenDir);
     setPendingIndex(nextIndex);
     setIsAnimating(true);
+    setIsTextFading(true);
 
     if (timerRef.current) window.clearTimeout(timerRef.current);
+    if (textTimerRef.current) window.clearTimeout(textTimerRef.current);
+
+    textTimerRef.current = window.setTimeout(() => {
+      setTextIndex(nextIndex);
+      setIsTextFading(false);
+    }, 220);
+
     timerRef.current = window.setTimeout(() => {
       setIndex(nextIndex);
       setPendingIndex(null);
@@ -92,18 +108,18 @@ export default function FeaturedAchievements() {
   }
 
   function next() {
-    goTo(safeIndex + 1);
+    goTo(safeIndex + 1, "next");
   }
 
   function prev() {
-    goTo(safeIndex - 1);
+    goTo(safeIndex - 1, "prev");
   }
 
   return (
     <section
       className="
-      relative overflow-hidden bg-slate-50 py-14
-      sm:py-16
+      relative overflow-hidden bg-slate-50 py-10
+      sm:py-14 lg:py-16
     "
     >
       <div className="pointer-events-none absolute inset-0">
@@ -121,23 +137,24 @@ export default function FeaturedAchievements() {
 
       <div
         className="
-        relative mx-auto max-w-7xl
+        relative mx-auto max-w-7xl px-4
+        sm:px-6
         lg:px-8
       "
       >
-        <header className="mx-auto mb-10 max-w-2xl text-center">
+        <header className="mx-auto mb-6 max-w-2xl text-center sm:mb-8 lg:mb-10">
           <h2
             className="
-            text-3xl font-semibold tracking-tight text-slate-900
-            sm:text-4xl
+            text-2xl font-semibold tracking-tight text-slate-900
+            sm:text-3xl lg:text-4xl
           "
           >
             Featured Achievements
           </h2>
           <p
             className="
-            mt-3 text-base text-slate-600
-            sm:text-lg
+            mt-2 text-sm text-slate-600 
+            sm:mt-3 sm:text-base lg:text-lg
           "
           >
             A curated spotlight on standout accomplishments across innovation,
@@ -147,10 +164,11 @@ export default function FeaturedAchievements() {
 
         <div
           className="
-          relative overflow-hidden rounded-3xl border border-slate-200/70
+          relative overflow-hidden rounded-2xl border border-slate-200/70
           bg-white/55 shadow-[0_22px_70px_-45px_rgba(15,23,42,0.55)]
           backdrop-blur-xl
           supports-backdrop-filter:bg-white/45
+          sm:rounded-3xl
         "
         >
           <div
@@ -169,22 +187,24 @@ export default function FeaturedAchievements() {
 
           <div
             className="
-            grid grid-cols-1 gap-8 p-6
-            sm:p-8
-            md:grid-cols-12 md:gap-10 md:p-10
+            grid grid-cols-1 gap-6 p-4
+            sm:gap-8 sm:p-6 md:grid-cols-2 md:gap-8 md:p-8
+            lg:grid-cols-12 lg:gap-8 lg:p-10
+            xl:gap-10
           "
           >
             {/* Left rail */}
             <aside
               className="
               order-2
-              md:order-1 md:col-span-3
+              md:order-3 md:col-span-2
+              lg:order-1 lg:col-span-3
             "
             >
               <div
                 className="
                 flex items-center justify-between
-                md:flex-col md:items-start md:gap-4
+                md:flex-row md:items-center lg:flex-col lg:items-start lg:gap-4
               "
               >
                 <span
@@ -203,9 +223,8 @@ export default function FeaturedAchievements() {
 
                 <div
                   className="
-                  hidden items-center gap-2 text-xs font-semibold
+                  flex items-center gap-2 text-xs font-semibold
                   tracking-[0.22em] text-slate-500 uppercase
-                  md:flex
                 "
                 >
                   <Sparkles className="size-4" />
@@ -215,8 +234,9 @@ export default function FeaturedAchievements() {
 
               <div
                 className="
-                mt-5 flex gap-2 overflow-x-auto pb-1
-                md:mt-8 md:flex-col md:overflow-visible
+                mt-4 flex gap-2.5 overflow-x-auto pb-2 pt-1
+                [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden
+                md:mt-6 md:grid md:grid-cols-3 md:gap-3.5 md:overflow-visible md:pb-0 lg:mt-8 lg:flex lg:flex-col lg:gap-2
               "
               >
                 {achievements.map((a, i) => {
@@ -228,9 +248,9 @@ export default function FeaturedAchievements() {
                       disabled={isAnimating}
                       className={cn(
                         `
-                          group relative w-[16rem] shrink-0 rounded-2xl
-                          text-left
-                          md:w-full
+                          group relative w-[15rem] shrink-0 rounded-2xl
+                          text-left sm:w-[16rem]
+                          md:w-full md:shrink
                         `,
                         "border bg-white/55 backdrop-blur-sm",
                         `
@@ -250,24 +270,24 @@ export default function FeaturedAchievements() {
                       )}
                       aria-label={`Show achievement: ${a.title}`}
                     >
-                      <div className="p-3">
-                        <div className="flex items-start gap-3">
+                      <div className="p-2.5 sm:p-3">
+                        <div className="flex items-start gap-2.5 sm:gap-3">
                           <span
                             className="
-                            inline-flex size-10 items-center justify-center
+                            inline-flex size-9 sm:size-10 shrink-0 items-center justify-center
                             rounded-xl bg-slate-900 text-white shadow-sm ring-1
                             ring-slate-900/10
                           "
                           >
                             {a.icon}
                           </span>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                               <span
                                 className={cn(
                                   `
-                                    inline-flex items-center rounded-full px-2.5
-                                    py-1 text-[11px] font-semibold
+                                    inline-flex items-center rounded-full px-2 sm:px-2.5
+                                    py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-semibold
                                   `,
                                   a.accent.chipBg,
                                   a.accent.chipText,
@@ -278,7 +298,7 @@ export default function FeaturedAchievements() {
                               </span>
                               <span
                                 className="
-                                text-[11px] font-medium text-slate-500
+                                text-[10px] sm:text-[11px] font-medium text-slate-500
                               "
                               >
                                 {a.year}
@@ -286,7 +306,7 @@ export default function FeaturedAchievements() {
                             </div>
                             <p
                               className="
-                              mt-1 line-clamp-2 text-sm font-semibold
+                              mt-1 line-clamp-2 text-xs sm:text-sm font-semibold
                               text-slate-900
                             "
                             >
@@ -312,14 +332,17 @@ export default function FeaturedAchievements() {
             <div
               className="
               order-1
-              md:order-2 md:col-span-4
+              md:order-1 md:col-span-1
+              lg:order-2 lg:col-span-4
             "
             >
               <div
                 className="
-                relative h-88 overflow-hidden rounded-2xl border
+                relative h-[25rem] overflow-hidden rounded-2xl border
                 border-slate-200/70 bg-white/55 backdrop-blur-sm
-                md:h-128
+                sm:h-[26rem]
+                md:h-[28rem]
+                lg:h-[32rem]
               "
               >
                 <div
@@ -339,19 +362,19 @@ export default function FeaturedAchievements() {
                   )}
                 />
 
-                <div className="absolute inset-0 p-5">
+                <div className="absolute inset-0 p-3 sm:p-5">
                   <div
                     className={cn(
                       `
-                        absolute inset-5 overflow-hidden rounded-xl border
-                        border-slate-200/70 bg-white
+                        absolute inset-3 overflow-hidden rounded-xl border
+                        border-slate-200/70 bg-white sm:inset-5
                       `,
                       "shadow-[0_18px_50px_-35px_rgba(15,23,42,0.55)]",
                       !incoming && "translate-y-0 opacity-100",
                       incoming &&
-                        (direction === "next"
-                          ? "animate-[panelOutUp_520ms_ease-in-out_forwards]"
-                          : "animate-[panelOutDown_520ms_ease-in-out_forwards]"),
+                      (direction === "next"
+                        ? "animate-[panelOutUp_520ms_ease-in-out_forwards]"
+                        : "animate-[panelOutDown_520ms_ease-in-out_forwards]"),
                     )}
                   >
                     <PosterCard a={current} />
@@ -361,8 +384,8 @@ export default function FeaturedAchievements() {
                     <div
                       className={cn(
                         `
-                          absolute inset-5 overflow-hidden rounded-xl border
-                          border-slate-200/70 bg-white
+                          absolute inset-3 overflow-hidden rounded-xl border
+                          border-slate-200/70 bg-white sm:inset-5
                         `,
                         "shadow-[0_18px_50px_-35px_rgba(15,23,42,0.55)]",
                         direction === "next"
@@ -389,8 +412,8 @@ export default function FeaturedAchievements() {
                   className={cn(
                     "inline-flex items-center justify-center rounded-full",
                     `
-                      border border-slate-200/80 bg-white/60 p-3 text-slate-900
-                      backdrop-blur-sm
+                      border border-slate-200/80 bg-white/60 p-2.5 text-slate-900
+                      backdrop-blur-sm sm:p-3
                     `,
                     `
                       transition
@@ -404,7 +427,7 @@ export default function FeaturedAchievements() {
                   )}
                   aria-label="Previous achievement"
                 >
-                  <ArrowLeft className="size-5" />
+                  <ArrowLeft className="size-4.5 sm:size-5" />
                 </button>
 
                 <div
@@ -437,8 +460,8 @@ export default function FeaturedAchievements() {
                   className={cn(
                     "inline-flex items-center justify-center rounded-full",
                     `
-                      border border-slate-200/80 bg-white/60 p-3 text-slate-900
-                      backdrop-blur-sm
+                      border border-slate-200/80 bg-white/60 p-2.5 text-slate-900
+                      backdrop-blur-sm sm:p-3
                     `,
                     `
                       transition
@@ -452,7 +475,7 @@ export default function FeaturedAchievements() {
                   )}
                   aria-label="Next achievement"
                 >
-                  <ArrowRight className="size-5" />
+                  <ArrowRight className="size-4.5 sm:size-5" />
                 </button>
               </div>
             </div>
@@ -461,48 +484,33 @@ export default function FeaturedAchievements() {
             <div
               className="
               order-3
-              md:col-span-5 md:pl-2
+              md:order-2 md:col-span-1 md:pl-0
+              lg:order-3 lg:col-span-5 lg:pl-2
             "
             >
               <div
                 className="
-                relative min-h-56 overflow-hidden rounded-2xl border
-                border-slate-200/70 bg-white/55 p-6 backdrop-blur-sm
-                sm:p-7
-                md:min-h-128
+                relative flex min-h-56 flex-col overflow-hidden rounded-2xl border
+                border-slate-200/70 bg-white/55 p-5 backdrop-blur-sm
+                sm:p-6 md:min-h-[28rem] md:p-7
+                lg:min-h-[32rem]
               "
               >
                 <div
                   className={cn(
-                    `
-                      absolute inset-0 p-6
-                      sm:p-7
-                    `,
-                    !incoming && "translate-x-0 opacity-100",
-                    incoming &&
-                      (direction === "next"
-                        ? "animate-[textOutLeft_520ms_ease-in-out_forwards]"
-                        : "animate-[textOutRight_520ms_ease-in-out_forwards]"),
+                    "flex h-full flex-col transition-all duration-200 ease-out",
+                    isTextFading
+
+                      ? direction === "next"
+                        ? "-translate-x-6 opacity-0"
+                        : "translate-x-6 opacity-0"
+                      : "translate-x-0 opacity-100",
                   )}
                 >
-                  <AchievementText a={current} />
+                  <AchievementText a={
+                    mustGet(achievements, textIndex, "achievement")
+                  } />
                 </div>
-
-                {incoming && (
-                  <div
-                    className={cn(
-                      `
-                        absolute inset-0 p-6
-                        sm:p-7
-                      `,
-                      direction === "next"
-                        ? "animate-[textInRight_520ms_ease-in-out_forwards]"
-                        : "animate-[textInLeft_520ms_ease-in-out_forwards]",
-                    )}
-                  >
-                    <AchievementText a={incoming} />
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -514,55 +522,63 @@ export default function FeaturedAchievements() {
 
 function PosterCard({ a }: { a: Achievement }) {
   return (
-    <div className="relative h-full">
+    <div className="relative flex h-full flex-col">
       <div
         className="
-        flex items-center justify-between border-b border-slate-200/70
-        bg-slate-50 px-5 py-4
+        flex shrink-0 items-center justify-between border-b border-slate-200/70
+        bg-slate-50 px-4 py-3 sm:px-5 sm:py-3.5
       "
       >
         <span
           className={cn(
             `
-              inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs
-              font-semibold
+              inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px]
+              font-semibold sm:gap-2 sm:px-3 sm:py-1 sm:text-xs
             `,
             a.accent.chipBg,
             a.accent.chipText,
             "ring-1 ring-slate-900/5",
           )}
         >
-          <Award className="size-4" />
+          <Award className="size-3.5 sm:size-4" />
           {a.category}
         </span>
-        <span className="text-xs font-medium text-slate-500">{a.year}</span>
+        <span className="text-[11px] font-medium text-slate-500 sm:text-xs">{a.year}</span>
       </div>
 
       <div
         className="
-        relative flex h-[calc(100%-56px)] flex-col items-center justify-center
-        px-6 text-center
+        relative flex flex-1 flex-col items-center justify-center px-4 py-4 text-center
+        sm:px-6 sm:py-5
       "
       >
         <div className="pointer-events-none absolute inset-0">
           <div
             className="
-            absolute top-6 left-6 size-10 border-t border-l border-slate-200
+            absolute top-3 left-3 size-6 border-t border-l border-slate-200/90
+            sm:top-5 sm:left-5 sm:size-8
+            md:top-6 md:left-6 md:size-9
           "
           />
           <div
             className="
-            absolute top-6 right-6 size-10 border-t border-r border-slate-200
+            absolute top-3 right-3 size-6 border-t border-r border-slate-200/90
+            sm:top-5 sm:right-5 sm:size-8
+            md:top-6 md:right-6 md:size-9
           "
           />
           <div
             className="
-            absolute bottom-6 left-6 size-10 border-b border-l border-slate-200
+            absolute bottom-3 left-3 size-6 border-b border-l border-slate-200/90
+            sm:bottom-5 sm:left-5 sm:size-8
+            md:bottom-6 md:left-6 md:size-9
           "
           />
           <div
             className="
-            absolute right-6 bottom-6 size-10 border-r border-b border-slate-200
+            absolute right-3 bottom-3 size-6 border-r border-b border-slate-200/90
+            sm:right-5 sm:bottom-5 sm:size-8
+            md:right-6 md:bottom-6 md:size-9
           "
           />
         </div>
@@ -570,24 +586,41 @@ function PosterCard({ a }: { a: Achievement }) {
         <div
           className={cn(
             `
-              mb-5 inline-flex size-16 items-center justify-center rounded-2xl
+              mb-3 inline-flex size-12 items-center justify-center rounded-xl
               bg-slate-900 text-white shadow-sm ring-2
+              sm:mb-4 sm:size-14 sm:rounded-2xl
+              md:mb-5 md:size-16
             `,
             a.accent.ring,
           )}
         >
-          {a.icon}
+          <span className="[&>svg]:size-5 sm:[&>svg]:size-6">
+            {a.icon}
+          </span>
         </div>
 
-        <h3 className="line-clamp-2 text-xl/snug font-semibold text-slate-900">
+        <h3
+          className="
+          line-clamp-2 text-base/snug font-semibold text-slate-900
+          sm:text-lg/snug md:text-xl/snug
+        "
+        >
           {a.title}
         </h3>
 
-        <p className="mt-2 text-sm font-medium text-slate-600">{a.student}</p>
+        <p className="mt-1 text-xs font-medium text-slate-600 sm:mt-1.5 sm:text-sm">
+          {a.student}
+        </p>
 
-        <div className="mt-6 h-px w-24 bg-slate-200" />
+        <div className="mt-3 h-px w-16 bg-slate-200 sm:mt-4 sm:w-20 md:mt-5 md:w-24" />
 
-        <p className="mt-4 line-clamp-3 text-sm/relaxed text-slate-600">
+        <p
+          className="
+          mt-2.5 max-w-xs line-clamp-3 text-xs/relaxed text-slate-600
+          sm:mt-3 sm:max-w-sm sm:text-sm/relaxed
+          md:mt-4
+        "
+        >
           {a.description}
         </p>
       </div>
@@ -602,8 +635,8 @@ function AchievementText({ a }: { a: Achievement }) {
         <span
           className={cn(
             `
-              inline-flex items-center rounded-full px-3 py-1 text-xs
-              font-semibold
+              inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px]
+              font-semibold sm:px-3 sm:py-1 sm:text-xs
             `,
             a.accent.chipBg,
             a.accent.chipText,
@@ -612,35 +645,43 @@ function AchievementText({ a }: { a: Achievement }) {
         >
           {a.category}
         </span>
-        <span className="text-xs font-medium text-slate-500">{a.year}</span>
+        <span className="text-[11px] font-medium text-slate-500 sm:text-xs">{a.year}</span>
       </div>
 
       <h3
         className="
-        mt-4 text-2xl font-semibold tracking-tight text-slate-900
-        sm:text-3xl
+        mt-3 text-xl font-semibold tracking-tight text-slate-900
+        sm:mt-4 sm:text-2xl
+        md:text-3xl
       "
       >
         {a.title}
       </h3>
 
-      <p className="mt-2 text-sm font-semibold text-slate-700">{a.student}</p>
+      <p className="mt-1.5 text-xs font-semibold text-slate-700 sm:mt-2 sm:text-sm">
+        {a.student}
+      </p>
 
-      <p className="mt-5 text-base/relaxed text-slate-600">{a.description}</p>
+      <p className="mt-3 text-sm/relaxed text-slate-600 sm:mt-4 sm:text-base/relaxed md:mt-5">
+        {a.description}
+      </p>
 
-      <div className="mt-auto pt-6">
+      <div className="mt-auto pt-4 sm:pt-6">
         <div className="flex items-center gap-2 text-xs text-slate-500">
           <span
             className="
-            inline-flex size-7 items-center justify-center rounded-full border
-            border-slate-200/70 bg-white
+            inline-flex size-6 items-center justify-center rounded-full border
+            border-slate-200/70 bg-white sm:size-7
           "
           >
-            <Sparkles className="size-4 text-slate-700" />
+            <Sparkles className="size-3.5 text-slate-700 sm:size-4" />
           </span>
-          <span>Curated highlight from the academic year</span>
+          <span className="text-[11px] sm:text-xs">
+            Curated highlight from the academic year
+          </span>
         </div>
       </div>
     </div>
   );
 }
+

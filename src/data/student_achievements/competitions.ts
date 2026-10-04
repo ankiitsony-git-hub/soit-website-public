@@ -10,7 +10,7 @@ export const competitions = [
   {
     tempId: 1,
     title: "AceHack",
-    position: "All Girls Team Winnner",
+    position: "All Girls Team Winner",
     detail: "Team PowerPuff Girls earned ₹10,000 for their innovative solution.",
     year: "2026",
     type: "National"

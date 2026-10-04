@@ -241,7 +241,7 @@ export default function Footer() {
                   Achievements
                 </Link>
                 <Link
-                  href="/student-life"
+                  href="/amenities"
                   className="
                     block text-sm font-medium text-gray-600 transition-colors
                     hover:text-black

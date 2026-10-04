@@ -238,3 +238,87 @@
 .dg-scroll-lock {
   overflow: hidden !important;
 }
+
+/* Featured Achievements Carousel Animations */
+
+@keyframes panelOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+
+@keyframes panelOutDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes textOutLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  35% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes textInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  35% {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes textOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  35% {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes textInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  35% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
